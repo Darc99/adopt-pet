@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import pet from "@frontendmasters/pet";
+import { navigate } from "@reach/router";
+import Modal from "./Modal";
 import Carousel from "./Carousel";
 import ErrorBoundary from "./ErrorBoundary";
 import ThemeContext from "./ThemeContext";
@@ -13,11 +15,12 @@ class Details extends Component {
   //   };
   // }
 
-  state = { loading: true };
+  state = { loading: true, showModal: false };
 
   componentDidMount() {
     pet.animal(this.props.id).then(({ animal }) => {
       this.setState({
+        url: animal.url,
         name: animal.name,
         animal: animal.type,
         location: `${animal.contact.address.city}, ${animal.contact.address.state}`,
@@ -29,12 +32,23 @@ class Details extends Component {
     }, console.error);
   }
 
+  toggleModal = () => this.setState({ showModal: !this.state.showModal });
+  adopt = () => navigate(this.state.url);
   render() {
     if (this.state.loading) {
       return <h1>Loading...</h1>;
     }
 
-    const { animal, breed, location, description, media, name } = this.state;
+    const {
+      animal,
+      breed,
+      location,
+      description,
+      media,
+      name,
+      showModal,
+      url,
+    } = this.state;
 
     return (
       <div className="details">
@@ -45,11 +59,27 @@ class Details extends Component {
 
           <ThemeContext.Consumer>
             {([theme]) => (
-              <button style={{ backgroundColor: theme }}>Adopt {name}</button>
+              <button
+                onClick={this.toggleModal}
+                style={{ backgroundColor: theme }}
+              >
+                Adopt {name}
+              </button>
             )}
           </ThemeContext.Consumer>
 
           <p>{description}</p>
+          {showModal ? (
+            <Modal>
+              <div>
+                <h1>Would you like to adopt {name}?</h1>
+                <div className="buttons">
+                  <button onClick={this.adopt}>Yes</button>
+                  <button onClick={this.toggleModal}>No</button>
+                </div>
+              </div>
+            </Modal>
+          ) : null}
         </div>
       </div>
     );
