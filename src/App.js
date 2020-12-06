@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
-import { Router, Link } from "@reach/router";
-import NavBar from './NavBar'
+import { Router } from "@reach/router";
+import NavBar from "./NavBar";
 import Details from "./Details";
 import SearchParams from "./SearchParams";
 import ThemeContext from "./ThemeContext";
